@@ -4,7 +4,7 @@ defmodule HuiMon.Application do
   use Application
 
   def start(_type, _args) do
-    children = []
+    children = [HuiMon.Solr]
 
     opts = [strategy: :one_for_one, name: HuiMon.Supervisor]
     Supervisor.start_link(children, opts)

@@ -14,11 +14,14 @@ defmodule HuiMon.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {HuiMon.Application, []}
+      mod: {HuiMon.Application, name: :default_solr}
     ]
   end
 
   defp deps do
-    []
+    [
+      {:bypass, "~> 2.1", only: :test},
+      {:hui, "~> 0.10.5"}
+    ]
   end
 end
