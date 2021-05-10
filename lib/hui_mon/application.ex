@@ -5,9 +5,11 @@ defmodule HuiMon.Application do
 
   def start(_type, _args) do
     ui_config = Application.get_env(:hui_mon, :viewport)
+    pubsub = Application.get_env(:hui_mon, :pubsub)
 
     children = [
       HuiMon.Source.Solr,
+      {Phoenix.PubSub, name: pubsub.server},
       {Scenic, viewports: [ui_config]}
     ]
 

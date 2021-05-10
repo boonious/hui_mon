@@ -30,6 +30,7 @@ defmodule HuiMon.MixProject do
       {:bypass, "~> 2.1", only: :test},
       {:hammox, "~> 0.5", only: :test},
       {:hui, "~> 0.10.5"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:scenic, "~> 0.10"},
       {:scenic_driver_glfw, "~> 0.10", targets: :host}
     ]

@@ -1,12 +1,13 @@
 import Config
 
 config :hui_mon,
+  pubsub: %{server: HuiMon.PubSub, topic: "solr_status"},
   solr_source: HuiMon.Source.Solr
 
 config :hui_mon, :viewport, %{
   name: :monitor_viewport,
   size: {700, 600},
-  default_scene: {HuiMon.UI.Home, nil},
+  default_scene: {HuiMon.UI.Home, [pubsub: %{server: HuiMon.PubSub, topic: "solr_status"}]},
   drivers: [
     %{
       module: Scenic.Driver.Glfw,
