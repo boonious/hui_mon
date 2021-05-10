@@ -1,15 +1,21 @@
-defmodule HuiMon.Solr do
+defmodule HuiMon.Source.Solr do
   use GenServer
   import Hui, only: [ping: 1]
 
   @default_poll_rate 5_000
   @default_solr :default_solr
 
+  @type ping_status :: {:pong, integer} | :pang
+  @type poll_rate :: integer
+  @type solr_instance :: atom
+
+  @callback state(GenServer.server()) :: {poll_rate, {solr_instance, ping_status}}
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @default_solr))
   end
 
-  @spec state(GenServer.server()) :: {:pong, integer} | :pang
+  @spec state(GenServer.server()) :: {poll_rate, {solr_instance, ping_status}}
   def state(server \\ @default_solr), do: GenServer.call(server, :state)
 
   @spec poll(GenServer.server()) :: any

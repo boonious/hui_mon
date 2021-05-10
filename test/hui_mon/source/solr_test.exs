@@ -1,6 +1,6 @@
-defmodule HuiMon.SolrTest do
+defmodule HuiMon.Source.SolrTest do
   use ExUnit.Case, async: true
-  alias HuiMon.Solr
+  alias HuiMon.Source.Solr
 
   @solr :test_solr
 
