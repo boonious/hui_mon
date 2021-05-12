@@ -1,6 +1,6 @@
-# hui_mon
+# hui 辉 mon [![Build Status](https://api.travis-ci.com/boonious/hui_mon.svg?branch=master)](https://travis-ci.com/github/boonious/hui_mon)
 
-A terminal-based monitor for Solr search engine.
+A top-like monitor for Solr search engine, currently being prototyped.
 
 ## Installation
 
