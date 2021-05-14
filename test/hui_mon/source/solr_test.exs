@@ -1,20 +1,17 @@
-defmodule HuiMon.SolrTest do
+defmodule HuiMon.Source.SolrTest do
   use ExUnit.Case, async: true
-  alias HuiMon.Solr
+  import TestHelpers
+  alias HuiMon.Source.Solr
 
+  @pubsub Application.get_env(:hui_mon, :pubsub)
   @solr :test_solr
-
-  defp bypass_ping_ok(bypass, qtime \\ 0) do
-    Bypass.expect_once(bypass, "GET", "/solr/test/admin/ping", fn conn ->
-      Plug.Conn.put_resp_header(conn, "content-type", "application/json")
-      |> Plug.Conn.resp(200, ~s({"responseHeader":{"QTime":#{qtime}},"status":"OK"}))
-    end)
-  end
 
   setup do
     bypass = Bypass.open()
     test_endpoint = [url: "http://localhost:#{bypass.port}/solr/test"]
     Application.put_env(:hui, :test_solr, test_endpoint)
+
+    start_supervised({Phoenix.PubSub, name: @pubsub.server})
 
     %{bypass: bypass}
   end

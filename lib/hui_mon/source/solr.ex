@@ -1,15 +1,23 @@
-defmodule HuiMon.Solr do
+defmodule HuiMon.Source.Solr do
   use GenServer
   import Hui, only: [ping: 1]
+  alias Phoenix.PubSub
 
   @default_poll_rate 5_000
   @default_solr :default_solr
+  @pubsub Application.get_env(:hui_mon, :pubsub)
+
+  @type ping_status :: {:pong, integer} | :pang
+  @type poll_rate :: integer
+  @type solr_instance :: atom
+
+  @callback state(GenServer.server()) :: {poll_rate, {solr_instance, ping_status}}
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @default_solr))
   end
 
-  @spec state(GenServer.server()) :: {:pong, integer} | :pang
+  @spec state(GenServer.server()) :: {poll_rate, {solr_instance, ping_status}}
   def state(server \\ @default_solr), do: GenServer.call(server, :state)
 
   @spec poll(GenServer.server()) :: any
@@ -30,9 +38,18 @@ defmodule HuiMon.Solr do
   def handle_call(:state, _from, state), do: {:reply, state, state}
 
   @impl true
-  def handle_info(:poll, {rate, {solr, _state}}) do
+  def handle_info(:poll, {rate, {solr, status}}) do
     schedule_poll(self(), rate)
-    {:noreply, {rate, {solr, ping(solr)}}}
+    new_status = ping(solr)
+
+    maybe_update_ui(status, new_status)
+    {:noreply, {rate, {solr, new_status}}}
+  end
+
+  defp maybe_update_ui(status, new_status) when status == new_status, do: :noop
+
+  defp maybe_update_ui(_status, new_status) do
+    PubSub.broadcast(@pubsub.server, @pubsub.topic, new_status)
   end
 
   defp schedule_poll(server, rate), do: Process.send_after(server, :poll, rate)
